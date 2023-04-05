@@ -16,11 +16,12 @@ class EndControllerTest {
     @DisplayName(value = "게임이 종료 상태일 때 명령어를 찾으면 예외가 발생한다.")
     void checkCommand() {
         // given
+        long userId = 1L;
         final EndController endController = new EndController();
         final Command command = new Command(CommandType.END, List.of("end"));
 
         // when, then
-        assertThatThrownBy(() -> endController.checkCommand(command))
+        assertThatThrownBy(() -> endController.checkCommand(command, userId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("게임이 끝났습니다.");
     }

@@ -10,7 +10,7 @@ public final class EndController implements Controller {
     }
 
     @Override
-    public Controller checkCommand(final Command command) {
+    public Controller checkCommand(final Command command, final long userId) {
         throw new IllegalArgumentException("게임이 끝났습니다.");
     }
 
@@ -20,7 +20,7 @@ public final class EndController implements Controller {
     }
 
     @Override
-    public Optional<ChessGame> findGame() {
+    public Optional<ChessGame> findGame(final long userId) {
         return Optional.empty();
     }
 }

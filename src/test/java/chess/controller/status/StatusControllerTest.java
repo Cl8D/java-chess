@@ -27,11 +27,12 @@ public class StatusControllerTest {
     @DisplayName(value = "게임이 status 상태일 때 start를 입력하면 예외가 발생한다.")
     void checkCommandStart() {
         // given
-        final StatusController statusController = new StatusController(1L, chessGameService);
+        long userId = 1L;
+        final StatusController statusController = new StatusController(chessGameService);
         final Command command = new Command(CommandType.START, List.of("start"));
 
         // when, then
-        assertThatThrownBy(() -> statusController.checkCommand(command))
+        assertThatThrownBy(() -> statusController.checkCommand(command, userId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 시작이 완료되었습니다.");
     }
@@ -40,11 +41,12 @@ public class StatusControllerTest {
     @DisplayName(value = "게임이 status 상태일 때 end를 입력하면 게임이 종료된다.")
     void checkCommandEnd() {
         // given
-        final StatusController statusController = new StatusController(1L, chessGameService);
+        long userId = 1L;
+        final StatusController statusController = new StatusController(chessGameService);
         final Command command = new Command(CommandType.END, List.of("end"));
 
         // when
-        Controller controller = statusController.checkCommand(command);
+        Controller controller = statusController.checkCommand(command, userId);
 
         // then
         assertThat(controller)
@@ -55,11 +57,12 @@ public class StatusControllerTest {
     @DisplayName(value = "게임이 status 상태일 때 move를 입력하면 이동하도록 제어한다.")
     void checkCommandMove() {
         // given
-        final StatusController statusController = new StatusController(1L, chessGameService);
+        long userId = 1L;
+        final StatusController statusController = new StatusController(chessGameService);
         final Command command = new Command(CommandType.MOVE, List.of("move", "a2", "a4"));
 
         // when
-        Controller controller = statusController.checkCommand(command);
+        Controller controller = statusController.checkCommand(command, userId);
 
         // then
         assertThat(controller)
@@ -70,7 +73,7 @@ public class StatusControllerTest {
     @DisplayName(value = "게임이 status 상태일 때 실행 중인지 체크하면 true를 반환한다")
     void isRun() {
         // given
-        final StatusController statusController = new StatusController(1L, chessGameService);
+        final StatusController statusController = new StatusController(chessGameService);
 
         // when
         boolean isRun = statusController.isRun();
@@ -84,10 +87,11 @@ public class StatusControllerTest {
     @DisplayName("게임이 진행 중인 상태가 아니라면 end 상태로 변경한다.")
     void getStatus() {
         // given
-        final StatusController statusController = new StatusController(1L, chessGameService);
+        long userId = 1L;
+        final StatusController statusController = new StatusController(chessGameService);
 
         // when
-        Controller controller = statusController.getStatus(false);
+        Controller controller = statusController.getStatus(false, userId);
 
         // then
         assertThat(controller)

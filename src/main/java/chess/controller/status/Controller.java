@@ -6,9 +6,9 @@ import chess.domain.chess.ChessGame;
 import java.util.Optional;
 
 public interface Controller {
-    Controller checkCommand(final Command command);
+    Controller checkCommand(final Command command, final long userId);
 
     boolean isRun();
 
-    Optional<ChessGame> findGame();
+    Optional<ChessGame> findGame(final long userId);
 }

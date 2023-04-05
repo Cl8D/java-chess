@@ -27,24 +27,24 @@ public final class ChessHandler {
     public void run() {
         final long userId = getUserId();
         OutputView.printStartMessage();
-        Controller controller = new StartController(userId, chessGameService);
+        Controller controller = new StartController(chessGameService);
         while (controller.isRun()) {
-            controller = play(controller);
+            controller = play(controller, userId);
         }
     }
 
-    private Controller play(Controller controller) {
+    private Controller play(Controller controller, final long userId) {
         try {
             final List<String> commands = InputView.getCommands();
             final Command command = Command.findCommand(commands);
-            controller = controller.checkCommand(command);
-            final Optional<ChessGame> chessGame = controller.findGame();
+            controller = controller.checkCommand(command, userId);
+            final Optional<ChessGame> chessGame = controller.findGame(userId);
             chessGame.ifPresent(game ->
                     OutputView.printBoard(ChessBoardDtoMapper.createChessBoardDto(game.getChessBoard())));
             return controller;
         } catch (IllegalArgumentException e) {
             OutputView.print(e.getMessage());
-            return play(controller);
+            return play(controller, userId);
         }
     }
 

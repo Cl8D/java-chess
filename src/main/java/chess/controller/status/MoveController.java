@@ -11,16 +11,14 @@ import java.util.Optional;
 
 public final class MoveController implements Controller {
 
-    private final long userId;
     private final ChessGameService chessGameService;
 
-    MoveController(final long userId, final ChessGameService chessGameService) {
-        this.userId = userId;
+    MoveController(final ChessGameService chessGameService) {
         this.chessGameService = chessGameService;
     }
 
     @Override
-    public Controller checkCommand(final Command command) {
+    public Controller checkCommand(final Command command, final long userId) {
         if (command.isStart()) {
             throw new IllegalArgumentException("이미 시작이 완료되었습니다.");
         }
@@ -28,9 +26,9 @@ public final class MoveController implements Controller {
             return new EndController();
         }
         if (command.isStatus()) {
-            return new StatusController(userId, chessGameService).getStatus(true);
+            return new StatusController(chessGameService).getStatus(true, userId);
         }
-        return move(command);
+        return move(command, userId);
     }
 
     @Override
@@ -39,19 +37,19 @@ public final class MoveController implements Controller {
     }
 
     @Override
-    public Optional<ChessGame> findGame() {
+    public Optional<ChessGame> findGame(final long userId) {
         final ChessGame chessGame = chessGameService.getOrCreateChessGame(userId);
         return Optional.of(chessGame);
     }
 
-    Controller move(final Command command) {
+    Controller move(final Command command, final long userId) {
         validateCommand(command);
-        playChessGame(command);
+        playChessGame(command, userId);
         final ChessGame chessGame = chessGameService.getOrCreateChessGame(userId);
         if (!chessGame.isKingAlive()) {
-            return new StatusController(userId, chessGameService).getStatus(false);
+            return new StatusController(chessGameService).getStatus(false, userId);
         }
-        return new MoveController(userId, chessGameService);
+        return new MoveController(chessGameService);
     }
 
     private void validateCommand(final Command command) {
@@ -60,7 +58,7 @@ public final class MoveController implements Controller {
         }
     }
 
-    private void playChessGame(final Command command) {
+    private void playChessGame(final Command command, final long userId) {
         final List<String> commands = command.getCommands();
         final Position source = PositionConverter.convert(commands.get(1));
         final Position target = PositionConverter.convert(commands.get(2));

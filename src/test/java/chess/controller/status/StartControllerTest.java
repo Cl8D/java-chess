@@ -27,11 +27,12 @@ class StartControllerTest {
     @DisplayName(value = "게임이 시작 상태일 때 사용자가 입력한 명령어가 move면 예외가 발생한다.")
     void checkCommandMove() {
         // given
-        final StartController startController = new StartController(1L, chessGameService);
+        long userId = 1L;
+        final StartController startController = new StartController(chessGameService);
         final Command command = new Command(CommandType.MOVE, List.of("move a2"));
 
         // when, then
-        assertThatThrownBy(() -> startController.checkCommand(command))
+        assertThatThrownBy(() -> startController.checkCommand(command, userId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("게임이 시작되지 않았습니다.");
     }
@@ -39,11 +40,12 @@ class StartControllerTest {
     @DisplayName(value = "게임이 시작 상태일 때 사용자가 입력한 명령어가 status면 예외가 발생한다.")
     void checkCommandStatus() {
         // given
-        final StartController startController = new StartController(1L, chessGameService);
+        long userId = 1L;
+        final StartController startController = new StartController(chessGameService);
         final Command command = new Command(CommandType.STATUS, List.of("status"));
 
         // when, then
-        assertThatThrownBy(() -> startController.checkCommand(command))
+        assertThatThrownBy(() -> startController.checkCommand(command, userId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("게임이 시작되지 않았습니다.");
     }
@@ -52,11 +54,12 @@ class StartControllerTest {
     @DisplayName(value = "게임이 시작 상태일 때 사용자가 입력한 명령어가 end면 게임이 종료된다.")
     void checkCommandEnd() {
         // given
-        final StartController startController = new StartController(1L, chessGameService);
+        long userId = 1L;
+        final StartController startController = new StartController(chessGameService);
         final Command command = new Command(CommandType.END, List.of("end"));
 
         // when
-        Controller controller = startController.checkCommand(command);
+        Controller controller = startController.checkCommand(command, userId);
 
         // then
         assertThat(controller)
@@ -67,7 +70,7 @@ class StartControllerTest {
     @DisplayName(value = "게임이 시작 상태일 때 실행 중인지 체크하면 true를 반환한다")
     void isRun() {
         // given
-        final StartController startController = new StartController(1L, chessGameService);
+        final StartController startController = new StartController(chessGameService);
 
         // when
         boolean isRun = startController.isRun();
